@@ -6,7 +6,9 @@ services:
     container_name: apache
     restart: always
     volumes:
-      - ./www:/var/www/html
+      #- ./www:/var/www/html
+      - www-data:/var/www/html
+      - ./000-default.conf:/etc/apache2/sites-enabled/000-default.conf
     ports:
       - 80:80
     links:
@@ -18,7 +20,7 @@ services:
     image: postgres
     container_name: postgres
     volumes:
-      - .db:/var/lib/postgresql
+      - .db:/var/lib/postgresql/data
     ports: 
       - 5432:5432
     environment: 
@@ -28,6 +30,13 @@ services:
     restart: always
     networks: 
       - mynetwork
+
+volumes: 
+  www-data:
+    driver: lebokus/bindfs:latest
+    driver_opts: 
+      sourcePath: "${PWD}/www"
+      map: "${UID}/0:@${UID}/@0"
 
 networks: 
   mynetwork:
